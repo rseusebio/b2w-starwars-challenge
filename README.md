@@ -4,6 +4,7 @@
 
 `mongo`
 `node`
+`tsc`
 
 ## Install
 
