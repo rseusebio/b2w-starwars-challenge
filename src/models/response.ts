@@ -2,7 +2,7 @@ import { IPlanetRecord }         from "./planet";
 import { StatusCode, statusMap } from "./status";
 import { Document }              from "mongoose"
 
-interface IStatusInfo 
+class StatusInfo 
 {
     message: String;
     code:    StatusCode;
@@ -12,7 +12,7 @@ class PlanetResponse
 {
     private     count:      number;
     private     planets:    Array<Document<IPlanetRecord>>
-    private     status:     IStatusInfo;
+    private     status:     StatusInfo;
 
     set statusCode( code: StatusCode )
     {
@@ -24,6 +24,7 @@ class PlanetResponse
     {
         this.count      =   0;
         this.planets    =   [];
+        this.status     =   new StatusInfo( );
     }
 
     insertOne( planet: Document<IPlanetRecord> )

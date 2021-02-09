@@ -9,45 +9,48 @@ describe( "Planets API ",
                 timeout: 5000
             });
 
-            describe( "POST add", 
+            describe( "Add route", 
                       () => 
                       {
-                          it( "Insert New", 
+                          it( "Insert new planets", 
                               async () => 
                               {
-                                const newPlanet = {
+                                const planets = [
+                                  {
                                     "name": "Endor",
                                     "climate": "temperate",
                                     "terrain": "forests, mountains, lakes"
-                                };
+                                  },
+                                  {
+                                    "name": "Naboo",
+                                    "climate": "temperate",
+                                    "terrain": "grassy hills, swamps, forests, mountains"
+                                  },
+                                  {
+                                    "name": "Coruscant",
+                                    "climate": "temperate",
+                                    "terrain": "cityscape, mountains"
+                                  }
+                                ]
 
-                                const res = await planetAPI.post( "/planets/add",newPlanet );
+                                for( let i = 0; i < planets.length; i++ )
+                                {
+                                  const p = planets[ i ];
 
-                                assert.equal( res.status,  200 );
+                                  const res = await planetAPI.post( "/planets/add", p );
 
-                                assert.typeOf( res.data,  "object" );
-                                assert.lengthOf( res.data.planets,  1 );
-                                assert.equal( res.data.count,  1 );
+                                  assert.equal( res.status,  200 );
+
+                                  assert.typeOf( res.data,  "object" );
+
+                                  assert.lengthOf( res.data.planets,  1 );
+
+                                  assert.equal( res.data.count,  1 );
+
+                                }
                               });
                             
-                            it( "Insert Equal", 
-                              async () => 
-                              {
-                                const newPlanet = {
-                                    "name": "Endor",
-                                    "climate": "temperate",
-                                    "terrain": "forests, mountains, lakes"
-                                };
-
-                                const res = await planetAPI.post( "/planets/add",newPlanet );
-
-                                assert.equal( res.status,  200 );
-
-                                assert.typeOf( res.data,  "object" );
-                                assert.lengthOf( res.data.planets,  0 );
-                                assert.equal( res.data.count,  0 );
-                              })
-                              it( "Insert Invalid Planet", 
+                          it( "Insert invalid planet name", 
                               async () => 
                               {
                                 const newPlanet = {
@@ -61,12 +64,68 @@ describe( "Planets API ",
                                 assert.equal( res.status,  200 );
 
                                 assert.typeOf( res.data,  "object" );
+
                                 assert.lengthOf( res.data.planets,  0 );
+
                                 assert.equal( res.data.count,  0 );
-                                assert.equal( res.data.message,  0 );
-                              })
-                        
+
+                                assert.equal( res.data.status.code, 3 );
+                              });
+                            
                       }
                     );
+            
+              describe( "Delete planets", 
+                        () => 
+                        {
+                          it( "Delete by name", 
+                              async () => 
+                              {
+
+                                const res = await planetAPI.delete ( "/planets/name/" + "Endor" );
+
+                                assert.equal( res.status,  200 );
+
+                                assert.typeOf( res.data,  "object" );
+
+                                assert.lengthOf( res.data.planets,  1 );
+
+                                assert.equal( res.data.count,  1 );
+                              });
+                        });
+              
+              describe( "List ", 
+                        () => 
+                        {
+                          it( "List all remaining planets", 
+                              async () => 
+                              {
+
+                                const res = await planetAPI.get( "/planets" );
+
+                                assert.equal( res.status,  200 );
+
+                                assert.typeOf( res.data,  "object" );
+
+                                assert.lengthOf( res.data.planets,  2 );
+
+                                assert.equal( res.data.count,  2 );
+                              });
+
+                          it( "Fech by name", 
+                              async () => 
+                              {
+
+                                const res = await planetAPI.get( "/planets/name/Coruscant" );
+
+                                assert.equal( res.status,  200 );
+
+                                assert.typeOf( res.data,  "object" );
+
+                                assert.lengthOf( res.data.planets,  1 );
+
+                                assert.equal( res.data.count,  1 );
+                              });
+                        });
           }
 );
